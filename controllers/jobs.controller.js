@@ -149,10 +149,10 @@ const createJob = async (req, res) => {
     }
 
     // 필수값 검증
-    const { TITLE, POSITION, START_LINE, DEAD_LINE, JOB_DESCRIPTION } =
+    const { title, position, start_line, dead_line, job_description } =
       req.body;
 
-    if (!TITLE || !POSITION || !START_LINE || !DEAD_LINE || !JOB_DESCRIPTION) {
+    if (!title || !position || !start_line || !dead_line || !job_description) {
       return res.status(400).json({
         success: false,
         message: '모든 필수 항목을 입력해주세요.',
@@ -162,11 +162,11 @@ const createJob = async (req, res) => {
     // 공고 생성
     const newJob = await Jobs.create({
       COMPANIES_ID: payload.id,
-      TITLE,
-      POSITION,
-      START_LINE,
-      DEAD_LINE,
-      JOB_DESCRIPTION,
+      TITLE: title,
+      POSITION: position,
+      START_LINE: start_line,
+      DEAD_LINE: dead_line,
+      JOB_DESCRIPTION: job_description,
     });
 
     return res.status(201).json({
@@ -223,22 +223,22 @@ const updateJob = async (req, res) => {
     }
 
     // 수정 가능한 필드
-    const { TITLE, POSITION, START_LINE, DEAD_LINE, JOB_DESCRIPTION } =
+    const { title, position, start_line, dead_line, job_description } =
       req.body;
 
     // 업데이트할 데이터 객체 생성
     const updateData = {};
 
-    if (TITLE !== undefined) updateData.TITLE = TITLE;
-    if (POSITION !== undefined) updateData.POSITION = POSITION;
-    if (START_LINE !== undefined) {
-      updateData.START_LINE = START_LINE;
+    if (title !== undefined) updateData.TITLE = title;
+    if (position !== undefined) updateData.POSITION = position;
+    if (start_line !== undefined) {
+      updateData.START_LINE = start_line;
     }
-    if (DEAD_LINE !== undefined) {
-      updateData.DEAD_LINE = DEAD_LINE;
+    if (dead_line !== undefined) {
+      updateData.DEAD_LINE = dead_line;
     }
-    if (JOB_DESCRIPTION !== undefined)
-      updateData.JOB_DESCRIPTION = JOB_DESCRIPTION;
+    if (job_description !== undefined)
+      updateData.JOB_DESCRIPTION = job_description;
 
     // 업데이트 실행
     await Jobs.update(updateData, {
@@ -315,9 +315,84 @@ const deleteJob = async (req, res) => {
   }
 };
 
+/**
+ * GET /jobs/exists
+ * 공고 존재 여부 확인
+ */
+const checkJobExists = async (req, res) => {
+  try {
+    const companyId = req.user.id;
+
+    // 공고 존재 여부 확인
+    const job = await Jobs.findOne({
+      where: { COMPANIES_ID: companyId },
+    });
+
+    const exists = !!job; // job이 존재하면 true, 없으면 false
+
+    return res.status(200).json({
+      exists: exists,
+    });
+  } catch (error) {
+    console.error('공고가 없음:', error);
+    return res.status(500).json({
+      success: false,
+      message: '공고가 없다',
+    });
+  }
+};
+
+/**
+ * GET /jobs/info
+ * 현재 로그인한 기업의 공고 기본 정보 조회 (title, position, start_line, dead_line, job_description)
+ */
+const getJobInfo = async (req, res) => {
+  try {
+    const companyId = req.user.id;
+
+    const job = await Jobs.findOne({
+      where: { COMPANIES_ID: companyId },
+      attributes: [
+        'TITLE',
+        'POSITION',
+        'START_LINE',
+        'DEAD_LINE',
+        'JOB_DESCRIPTION',
+      ],
+    });
+
+    // 공고가 존재하지 않는 경우
+    if (!job) {
+      return res.status(404).json({
+        success: false,
+        message: '공고를 찾을 수 없습니다.',
+      });
+    }
+
+    // 응답 데이터 구성
+    const result = {
+      title: job.TITLE,
+      position: job.POSITION,
+      start_line: job.START_LINE,
+      dead_line: job.DEAD_LINE,
+      job_description: job.JOB_DESCRIPTION,
+    };
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error('공고 정보 조회 오류:', error);
+    return res.status(500).json({
+      success: false,
+      message: '공고 정보를 불러오는데 문제가 발생했습니다.',
+    });
+  }
+};
+
 module.exports = {
   getJobs,
   getJobDetail,
+  getJobInfo,
+  checkJobExists,
   createJob,
   updateJob,
   deleteJob,
