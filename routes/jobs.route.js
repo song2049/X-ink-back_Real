@@ -18,11 +18,10 @@ router.get('/exists', authMiddleware, jobsController.checkJobExists);
 // POST /jobs - 공고 생성 (인증 필요)
 router.post('/', authMiddleware, jobsController.createJob);
 
-// PATCH /jobs/:id - 공고 수정 (인증 필요)
-router.patch('/:id', authMiddleware, jobsController.updateJob);
+// PUT /jobs - 공고 수정 (인증 필요)
+router.put('/', authMiddleware, jobsController.updateJob);
 
-// DELETE /jobs/:id - 공고 삭제 (인증 필요)
-router.delete('/:id', authMiddleware, jobsController.deleteJob);
+// DELETE /jobs - 공고 삭제 (인증 필요)
+router.delete('/', authMiddleware, jobsController.deleteJob);
 
 module.exports = router;
-

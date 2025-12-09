@@ -184,41 +184,24 @@ const createJob = async (req, res) => {
 };
 
 /**
- * PATCH /jobs/:id
+ * PUT /jobs
  * 공고 수정
  */
 const updateJob = async (req, res) => {
   try {
     // req.user는 authMiddleware에서 설정됨
-    const payload = req.user;
+    const companyId = req.user.id;
 
-    // role이 "companies"가 아닌 경우
-    if (payload.role !== 'companies') {
-      return res.status(403).json({
-        success: false,
-        message: '권한이 없습니다.',
-      });
-    }
-
-    const { id } = req.params;
-
-    // 공고 존재 확인
+    // 기업 ID로 공고 조회
     const job = await Jobs.findOne({
-      where: { ID: id },
+      where: { COMPANIES_ID: companyId },
     });
 
+    // 공고가 존재하지 않는 경우
     if (!job) {
       return res.status(404).json({
         success: false,
         message: '공고를 찾을 수 없습니다.',
-      });
-    }
-
-    // 권한 확인: 공고의 COMPANIES_ID와 JWT payload.id 일치 확인
-    if (job.COMPANIES_ID !== payload.id) {
-      return res.status(403).json({
-        success: false,
-        message: '이 공고를 수정할 권한이 없습니다.',
       });
     }
 
@@ -242,7 +225,7 @@ const updateJob = async (req, res) => {
 
     // 업데이트 실행
     await Jobs.update(updateData, {
-      where: { ID: id },
+      where: { COMPANIES_ID: companyId },
     });
 
     return res.status(200).json({
@@ -259,29 +242,20 @@ const updateJob = async (req, res) => {
 };
 
 /**
- * DELETE /jobs/:id
+ * DELETE /jobs
  * 공고 삭제
  */
 const deleteJob = async (req, res) => {
   try {
     // req.user는 authMiddleware에서 설정됨
-    const payload = req.user;
+    const companyId = req.user.id;
 
-    // role이 "companies"가 아닌 경우
-    if (payload.role !== 'companies') {
-      return res.status(403).json({
-        success: false,
-        message: '권한이 없습니다.',
-      });
-    }
-
-    const { id } = req.params;
-
-    // 공고 존재 확인
+    // 기업 ID로 공고 조회
     const job = await Jobs.findOne({
-      where: { ID: id },
+      where: { COMPANIES_ID: companyId },
     });
 
+    // 공고가 존재하지 않는 경우
     if (!job) {
       return res.status(404).json({
         success: false,
@@ -289,17 +263,9 @@ const deleteJob = async (req, res) => {
       });
     }
 
-    // 권한 확인: 공고의 COMPANIES_ID와 JWT payload.id 일치 확인
-    if (job.COMPANIES_ID !== payload.id) {
-      return res.status(403).json({
-        success: false,
-        message: '이 공고를 삭제할 권한이 없습니다.',
-      });
-    }
-
     // 공고 삭제
     await Jobs.destroy({
-      where: { ID: id },
+      where: { COMPANIES_ID: companyId },
     });
 
     return res.status(200).json({
