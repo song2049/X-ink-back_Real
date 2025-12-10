@@ -209,19 +209,23 @@ const updateJob = async (req, res) => {
     const { title, position, start_line, dead_line, job_description } =
       req.body;
 
+    if (!title || !position || !start_line || !dead_line || !job_description) {
+      return res.status(400).json({
+        success: false,
+        message: '모든 필수 항목을 입력해주세요.',
+      });
+    }
+
     // 업데이트할 데이터 객체 생성
     const updateData = {};
 
-    if (title !== undefined) updateData.TITLE = title;
-    if (position !== undefined) updateData.POSITION = position;
-    if (start_line !== undefined) {
-      updateData.START_LINE = start_line;
-    }
-    if (dead_line !== undefined) {
-      updateData.DEAD_LINE = dead_line;
-    }
-    if (job_description !== undefined)
-      updateData.JOB_DESCRIPTION = job_description;
+    updateData.TITLE = title;
+    updateData.POSITION = position;
+
+    updateData.START_LINE = start_line;
+    updateData.DEAD_LINE = dead_line;
+
+    updateData.JOB_DESCRIPTION = job_description;
 
     // 업데이트 실행
     await Jobs.update(updateData, {
