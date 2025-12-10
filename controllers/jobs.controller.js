@@ -319,6 +319,7 @@ const getJobInfo = async (req, res) => {
     const job = await Jobs.findOne({
       where: { COMPANIES_ID: companyId },
       attributes: [
+        'ID',
         'TITLE',
         'POSITION',
         'START_LINE',
@@ -337,6 +338,7 @@ const getJobInfo = async (req, res) => {
 
     // 응답 데이터 구성
     const result = {
+      id: job.ID,
       title: job.TITLE,
       position: job.POSITION,
       start_line: job.START_LINE,
