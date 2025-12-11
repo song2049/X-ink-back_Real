@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const authRouter = require('./routes/auth.route.js');
 const jobsRouter = require('./routes/jobs.route.js');
 const joinRouter = require('./routes/join.route.js');
+const uploadRoute = require('./routes/upload.route');
 const jobApplicationRouter = require('./routes/jobApplication.route.js');
 const { sequelize } = require('./models');
 const seedUsers = require('./seeders/user.seed');
@@ -54,6 +55,9 @@ app.use('/join', joinRouter);
 
 // JobApplications 라우트
 app.use('/jobapplications', jobApplicationRouter);
+
+// Upload 라우트
+app.use('/upload', uploadRoute);
 
 // 서버 시작 (Sequelize 연결 확인 + 더미 데이터 시딩 포함)
 const startServer = async () => {

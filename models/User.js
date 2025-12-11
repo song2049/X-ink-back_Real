@@ -46,6 +46,11 @@ const User = sequelize.define(
       allowNull: true,
       field: 'INTRO',
     },
+    THUMBNAIL_URL: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      field: 'LOGO_URL',
+    },
     CREATED_AT: {
       type: DataTypes.DATE,
       allowNull: false,
