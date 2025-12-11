@@ -50,6 +50,8 @@ const User = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
       field: 'LOGO_URL',
+      defaultValue:
+        'https://x-ink-bucket.s3.ap-northeast-2.amazonaws.com/uploads/2cdeab4d-2ca1-461d-877c-78dd01f3cd3c.png',
     },
     CREATED_AT: {
       type: DataTypes.DATE,

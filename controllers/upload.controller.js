@@ -1,38 +1,6 @@
 const s3 = require('../config/aws');
 const { v4: uuidv4 } = require('uuid');
-const multer = require('multer');
-
-// Multer 설정 - 메모리 스토리지 사용 (파일을 메모리에 저장)
-const storage = multer.memoryStorage();
-
-// 파일 필터링 (이미지 파일만 허용)
-const fileFilter = (req, file, cb) => {
-  const allowedMimeTypes = [
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/gif',
-    'image/webp',
-  ];
-
-  if (allowedMimeTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(
-      new Error('이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif, webp)'),
-      false,
-    );
-  }
-};
-
-// Multer 미들웨어 설정
-const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB 제한
-  },
-});
+const { User } = require('../models');
 
 /**
  * POST /api/upload
@@ -40,11 +8,10 @@ const upload = multer({
  */
 const uploadFile = async (req, res) => {
   try {
-    // 파일이 없으면 에러
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: '파일이 업로드되지 않았습니다.',
+        message: '썹네일이 업로드되지 않았습니다.',
       });
     }
 
@@ -64,21 +31,30 @@ const uploadFile = async (req, res) => {
 
     console.log(uploadResult.Location);
 
+    const id = req.user.id;
+
+    const updateUrl = {};
+
+    updateUrl.THUMBNAIL_URL = uploadResult.Location;
+
+    await User.update(updateUrl, {
+      where: { ID: id },
+    });
+
     return res.status(200).json({
       success: true,
-      message: '파일이 성공적으로 업로드되었습니다.',
+      message: '썸네일이 성공적으로 업로드되었습니다.',
     });
   } catch (error) {
-    console.error('파일 업로드 오류:', error);
+    console.error('썸네일 업로드 오류:', error);
     return res.status(500).json({
       success: false,
-      message: '파일 업로드 중 오류가 발생했습니다.',
+      message: '썸네일 업로드 중 오류가 발생했습니다.',
       error: error.message,
     });
   }
 };
 
 module.exports = {
-  upload,
   uploadFile,
 };
