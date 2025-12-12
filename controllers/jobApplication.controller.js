@@ -281,7 +281,7 @@ const getVolunteers = async (req, res) => {
     }
     const volunteers = await User.findAll({
       attributes: {
-        exclude: ['PASSWORD', 'CREATED_AT', 'INTRO'],
+        exclude: ['PASSWORD', 'CREATED_AT'],
       },
     });
 
@@ -294,6 +294,7 @@ const getVolunteers = async (req, res) => {
         birthDate: volunteer.BIRTH_DATE,
         position: volunteer.POSITION,
         thumbnailUrl: volunteer.THUMBNAIL_URL,
+        intro: volunteer.INTRO,
       };
     });
 

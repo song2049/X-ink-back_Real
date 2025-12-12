@@ -70,7 +70,7 @@ const startServer = async () => {
     await sequelize.authenticate();
     console.log('✅ 데이터베이스 연결이 성공적으로 설정되었습니다.\n');
 
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: true });
     console.log('테이블 모델 변경사항 적용');
 
     // 더미 사용자 데이터 시딩
