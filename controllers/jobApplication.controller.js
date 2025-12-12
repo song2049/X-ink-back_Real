@@ -160,6 +160,12 @@ const getCheck = async (req, res) => {
       };
     });
 
+    if (result.length == 0) {
+      return res.status(200).json({
+        success: true,
+        message: '아직 해당 공고에 지원한 이력이 없습니다.',
+      });
+    }
     return res.status(200).json({
       success: true,
       data: result,
