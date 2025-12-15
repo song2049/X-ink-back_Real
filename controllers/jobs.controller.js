@@ -16,7 +16,7 @@ const getJobs = async (req, res) => {
         {
           model: Companies,
           as: 'company',
-          attributes: ['NAME'],
+          attributes: ['NAME', 'LOGO_URL'],
         },
       ],
     });
@@ -42,6 +42,7 @@ const getJobs = async (req, res) => {
         dday: dday,
         position: job.POSITION,
         status: job.STATUS,
+        companyLogoURL: job.LOGO_URL,
       };
     });
 
@@ -78,7 +79,7 @@ const getJobDetail = async (req, res) => {
         {
           model: Companies,
           as: 'company',
-          attributes: ['NAME'],
+          attributes: ['NAME', 'LOGO_URL'],
         },
       ],
     });
@@ -118,6 +119,7 @@ const getJobDetail = async (req, res) => {
       status: job.STATUS,
       deadline: job.DEAD_LINE,
       dday: dday,
+      companyLogoURL: job.LOGO_URL,
       volunteerCount: volunteerCount,
     };
 
