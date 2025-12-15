@@ -42,7 +42,7 @@ const getJobs = async (req, res) => {
         dday: dday,
         position: job.POSITION,
         status: job.STATUS,
-        companyLogoURL: job.LOGO_URL,
+        companyLogoURL: job.company ? job.company.LOGO_URL : null,
       };
     });
 
@@ -119,7 +119,7 @@ const getJobDetail = async (req, res) => {
       status: job.STATUS,
       deadline: job.DEAD_LINE,
       dday: dday,
-      companyLogoURL: job.LOGO_URL,
+      companyLogoURL: job.company ? job.company.LOGO_URL : null,
       volunteerCount: volunteerCount,
     };
 
